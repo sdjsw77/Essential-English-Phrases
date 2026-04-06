@@ -1,7 +1,7 @@
 {
   "name": "필수 영어 회화 30",
   "short_name": "Top30 English",
-  "start_url": "/index.html",
+  "start_url": "./index.html"
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#007bff",
