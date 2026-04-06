@@ -401,7 +401,7 @@
 <script>
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./service-worker.js')
+            navigator.serviceWorker.register('./service-worker.js?v=2')
             .then(reg => console.log('서비스 워커 등록 성공!'))
             .catch(err => console.error('서비스 워커 등록 실패:', err));
         });
