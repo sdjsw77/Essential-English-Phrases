@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>필수 영어 패턴 30 (모바일 최적화)</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --bg: #f9fafb;
+            --card-bg: #ffffff;
+            --text-main: #111827;
+            --text-sub: #4b5563;
+            --accent: #ef4444;
+            --border: #e5e7eb;
+            --safe-area-bottom: env(safe-area-inset-bottom);
+            --success: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Header & Notice */
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 1rem 0.5rem;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        header h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .notice-banner {
+            background-color: #fffbeb;
+            color: #92400e;
+            padding: 0.75rem;
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-bottom: 1px solid #fcd34d;
+            word-break: keep-all;
+        }
+
+        /* Day Navigation */
+        .day-nav {
+            display: flex;
+            overflow-x: auto;
+            background: white;
+            padding: 0.75rem 1rem;
+            gap: 0.6rem;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+            position: sticky;
+            top: 54px;
+            z-index: 90;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        
+        .day-nav::-webkit-scrollbar {
+            display: none;
+        }
+
+        .day-btn {
+            flex: 0 0 auto;
+            padding: 0.6rem 1.1rem;
+            border: 1px solid var(--border);
+            border-radius: 2rem;
+            background: white;
+            color: var(--text-sub);
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 0.95rem;
+            font-weight: 500;
+            position: relative;
+        }
+
+        .day-btn.active {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            font-weight: 700;
+            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);
+            transform: scale(1.02);
+        }
+        
+        .day-completed-dot {
+            position: absolute;
+            top: 0px;
+            right: 0px;
+            width: 10px;
+            height: 10px;
+            background-color: var(--success);
+            border-radius: 50%;
+            border: 2px solid white;
+            display: none;
+        }
+        .day-btn.all-done .day-completed-dot {
+            display: block;
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            padding: 1rem;
+            padding-bottom: calc(6rem + var(--safe-area-bottom));
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .day-title {
+            margin-bottom: 1rem;
+            color: var(--text-main);
+            font-size: 1.1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .progress-text {
+            font-size: 0.85rem;
+            color: var(--primary);
+            font-weight: 600;
+            background: #e0e7ff;
+            padding: 4px 10px;
+            border-radius: 12px;
+        }
+
+        /* Pattern List */
+        .pattern-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+        }
+
+        .pattern-item {
+            background: var(--card-bg);
+            border-radius: 1rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0,0,0,0.03);
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* 부드러운 전환 효과 */
+        }
+
+        .pattern-item:active {
+            transform: scale(0.99);
+        }
+
+        /* --- 완료된 항목 스타일 (시각적 효과 강화) --- */
+        .pattern-item.completed {
+            background-color: #f3f4f6; /* 어두운 회색 배경 */
+            border-color: #d1d5db;     /* 테두리도 진하게 */
+            opacity: 0.9;              /* 약간 투명하게 */
+        }
+        
+        .pattern-item.completed .pattern-header {
+            background-color: rgba(0,0,0,0.02); /* 헤더도 약간 어둡게 */
+        }
+
+        .pattern-item.completed .pattern-en {
+            color: #6b7280; /* 회색 텍스트 */
+            text-decoration: line-through; /* 취소선 */
+        }
+
+        .pattern-item.completed .pattern-ko {
+            color: #9ca3af; /* 더 연한 회색 */
+        }
+
+        /* ------------------------------------------- */
+
+        .pattern-header {
+            padding: 1rem 1.25rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            background: transparent;
+            user-select: none;
+            gap: 1rem;
+        }
+
+        .checkbox-wrapper {
+            position: relative;
+            width: 28px;
+            height: 28px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .custom-checkbox {
+            appearance: none;
+            width: 26px;
+            height: 26px;
+            border: 2px solid #d1d5db;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background-color: white;
+            position: relative;
+        }
+
+        .custom-checkbox:checked {
+            background-color: var(--success);
+            border-color: var(--success);
+            transform: scale(1.1);
+        }
+
+        .custom-checkbox:checked::after {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 4px;
+            width: 6px;
+            height: 11px;
+            border: solid white;
+            border-width: 0 2.5px 2.5px 0;
+            transform: rotate(45deg);
+        }
+
+        .pattern-title-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+            flex: 1;
+        }
+
+        .pattern-en {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: -0.3px;
+            transition: color 0.3s;
+        }
+
+        .pattern-ko {
+            font-size: 0.9rem;
+            color: var(--text-sub);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .toggle-icon {
+            color: #9ca3af;
+            font-size: 0.8rem;
+            transition: transform 0.3s ease;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pattern-item.active .toggle-icon {
+            transform: rotate(180deg);
+            color: var(--primary);
+        }
+
+        .pattern-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease-in-out;
+            background-color: #f8fafc;
+        }
+
+        .pattern-item.active .pattern-content {
+            max-height: 2000px;
+            border-top: 1px solid var(--border);
+            padding: 1.25rem 1rem;
+        }
+
+        .pattern-desc {
+            margin-bottom: 1.2rem;
+            color: #4b5563;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            background: white;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            border: 1px solid #e5e7eb;
+        }
+
+        .example-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .example-item {
+            background-color: white;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            border-left: 4px solid var(--primary);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+        }
+
+        .ex-en {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            line-height: 1.4;
+            color: #1f2937;
+        }
+
+        .ex-ko {
+            font-size: 0.85rem;
+            color: #6b7280;
+            line-height: 1.4;
+        }
+
+        .speaker-icon {
+            cursor: pointer;
+            color: var(--primary);
+            padding: 8px;
+            margin: -8px -8px -8px 0;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        
+        .speaker-icon:active {
+            background-color: #e0e7ff;
+            transform: scale(0.95);
+        }
+
+        .bottom-nav-fixed {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1rem;
+            padding-bottom: max(1rem, var(--safe-area-bottom));
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: center;
+            z-index: 200;
+        }
+
+        .nav-btn {
+            background-color: var(--primary);
+            color: white;
+            width: 100%;
+            max-width: 600px;
+            padding: 1rem;
+            border-radius: 1rem;
+            border: none;
+            font-weight: 700;
+            font-size: 1.05rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+            transition: all 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-btn:active {
+            transform: scale(0.98);
+            background-color: var(--primary-dark);
+        }
+
+        html {
+            background-color: var(--bg);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>영어 필수 패턴 30</h1>
+    </header>
+
+    <div class="notice-banner">
+        ⚠️ 24시간 내 복습 필수! 완료된 문장은 체크하세요 ✅
+    </div>
+
+    <nav class="day-nav" id="dayNav">
+        <!-- JS로 생성됨 -->
+    </nav>
+
+    <main>
+        <div class="day-title">
+            <span id="dayTitleText">Day 1 학습하기</span>
+            <span id="progressText" class="progress-text">0/5 완료</span>
+        </div>
+
+        <div id="patternList" class="pattern-list">
+            <!-- 패턴 리스트가 여기에 렌더링 됩니다 -->
+        </div>
+    </main>
+
+    <div class="bottom-nav-fixed">
+        <button class="nav-btn" id="nextDayBtn" onclick="goToNextDay()">
+            다음 날짜 학습하기 👉
+        </button>
+    </div>
+
+    <script>
+        const patterns = [
+            // Day 1
+            {
+                day: 1,
+                en: "I'm trying to",
+                ko: "~하려고 노력 중이야",
+                desc: "현재 어떤 목표를 위해 애쓰고 있거나 시도 중임을 나타낼 때 사용합니다.",
+                examples: [
+                    { en: "I'm trying to sleep.", ko: "나 자려고 노력 중이야." },
+                    { en: "I'm trying to focus on my work.", ko: "일하는데 집중하려고 노력 중이야." },
+                    { en: "I'm trying to lose some weight.", ko: "살을 좀 빼려고 노력 중이야." },
+                    { en: "I'm trying to fix this problem.", ko: "이 문제를 해결하려고 노력 중이야." }
+                ]
+            },
+            {
+                day: 1,
+                en: "I'm supposed to",
+                ko: "~하기로 되어 있어",
+                desc: "의무, 예정, 혹은 규칙에 의해 무언가를 해야 함을 나타냅니다.",
+                examples: [
+                    { en: "I'm supposed to be there now.", ko: "나 지금 거기 가 있어야 해." },
+                    { en: "I'm supposed to meet him at 5.", ko: "5시에 그를 만나기로 되어 있어." },
+                    { en: "I'm supposed to finish this by tomorrow.", ko: "내일까지 이걸 끝내기로 되어 있어." },
+                    { en: "We are supposed to help each other.", ko: "우린 서로 돕기로 되어 있잖아." }
+                ]
+            },
+            {
+                day: 1,
+                en: "I was about to",
+                ko: "~하려던 참이었어",
+                desc: "막 어떤 행동을 시작하려고 했던 바로 그 찰나의 순간을 표현합니다.",
+                examples: [
+                    { en: "I was about to call you.", ko: "막 너한테 전화하려던 참이었어." },
+                    { en: "I was about to leave the house.", ko: "막 집에서 나가려던 참이었어." },
+                    { en: "I was about to say the same thing.", ko: "나도 똑같은 말을 하려던 참이었어." },
+                    { en: "I was about to go to bed.", ko: "막 자러 가려던 참이었어." }
+                ]
+            },
+            {
+                day: 1,
+                en: "I'm here to",
+                ko: "~하러 왔어",
+                desc: "현재 이곳에 온 목적이나 이유를 설명할 때 씁니다.",
+                examples: [
+                    { en: "I'm here to help you.", ko: "널 도우러 왔어." },
+                    { en: "I'm here to see Mr. Kim.", ko: "김 선생님을 뵈러 왔습니다." },
+                    { en: "I'm here to pick up my order.", ko: "주문한 거 찾으러 왔어요." },
+                    { en: "I'm here to learn English.", ko: "영어 배우러 왔어요." }
+                ]
+            },
+            {
+                day: 1,
+                en: "I've been ~ing",
+                ko: "그동안 쭉 ~해 왔어",
+                desc: "과거부터 현재까지 계속되고 있는 행동을 강조할 때 사용합니다.",
+                examples: [
+                    { en: "I've been waiting for you.", ko: "계속 너 기다리고 있었어." },
+                    { en: "I've been thinking about you.", ko: "계속 네 생각하고 있었어." },
+                    { en: "I've been working here for 5 years.", ko: "여기서 5년째 일해오고 있어." },
+                    { en: "I've been studying hard lately.", ko: "최근에 공부 열심히 하고 있어." }
+                ]
+            },
+
+            // Day 2
+            {
+                day: 2,
+                en: "Let me",
+                ko: "내가 ~할게",
+                desc: "자신이 무언가를 하겠다고 제안하거나 허락을 구할 때 씁니다.",
+                examples: [
+                    { en: "Let me check.", ko: "내가 확인해볼게." },
+                    { en: "Let me help you with that.", ko: "그거 내가 도와줄게." },
+                    { en: "Let me think about it.", ko: "내가 한번 생각해볼게." },
+                    { en: "Let me introduce myself.", ko: "제 소개를 할게요." }
+                ]
+            },
+            {
+                day: 2,
+                en: "Can I get",
+                ko: "~ 주시겠어요? / 얻을 수 있을까요?",
+                desc: "상점이나 식당에서 주문할 때, 혹은 무언가를 요청할 때 가장 많이 쓰는 표현입니다.",
+                examples: [
+                    { en: "Can I get a coffee, please?", ko: "커피 한 잔 주시겠어요?" },
+                    { en: "Can I get a refund?", ko: "환불받을 수 있을까요?" },
+                    { en: "Can I get your number?", ko: "번호 좀 알 수 있을까요?" },
+                    { en: "Can I get some water?", ko: "물 좀 주시겠어요?" }
+                ]
+            },
+            {
+                day: 2,
+                en: "Can you",
+                ko: "~해 줄 수 있어?",
+                desc: "상대방에게 가벼운 부탁이나 요청을 할 때 사용합니다.",
+                examples: [
+                    { en: "Can you help me?", ko: "나 좀 도와줄 수 있어?" },
+                    { en: "Can you do me a favor?", ko: "부탁 하나만 들어줄 수 있어?" },
+                    { en: "Can you tell me where it is?", ko: "거기가 어딘지 말해줄 수 있어?" },
+                    { en: "Can you speak more slowly?", ko: "좀 더 천천히 말해줄 수 있어?" }
+                ]
+            },
+            {
+                day: 2,
+                en: "Do you mind ~ing",
+                ko: "~하는 거 괜찮을까요? (해주실래요?)",
+                desc: "매우 정중하게 부탁할 때 씁니다. (직역: ~하는 것을 꺼리시나요?)",
+                examples: [
+                    { en: "Do you mind opening the window?", ko: "창문 좀 열어 주실 수 있나요?" },
+                    { en: "Do you mind waiting a moment?", ko: "잠시만 기다려 주시겠어요?" },
+                    { en: "Do you mind if I sit here?", ko: "여기 앉아도 괜찮을까요?" },
+                    { en: "Do you mind keeping it down?", ko: "조용히 좀 해주실래요?" }
+                ]
+            },
+            {
+                day: 2,
+                en: "I'm not sure if",
+                ko: "~인지 잘 모르겠어",
+                desc: "확신이 서지 않거나 조심스럽게 의견을 말할 때 사용합니다.",
+                examples: [
+                    { en: "I'm not sure if it works.", ko: "이게 작동하는지 잘 모르겠어." },
+                    { en: "I'm not sure if I can go.", ko: "내가 갈 수 있을지 잘 모르겠어." },
+                    { en: "I'm not sure if this is right.", ko: "이게 맞는지 잘 모르겠어." },
+                    { en: "I'm not sure if he likes it.", ko: "그가 그걸 좋아하는지 잘 모르겠어." }
+                ]
+            },
+
+            // Day 3
+            {
+                day: 3,
+                en: "I don't think",
+                ko: "~인 것 같지 않아",
+                desc: "부정적인 의견을 말할 때 'It is not...'보다 훨씬 부드럽고 일반적인 표현입니다.",
+                examples: [
+                    { en: "I don't think that's true.", ko: "그건 사실이 아닌 것 같아." },
+                    { en: "I don't think it's a good idea.", ko: "그건 좋은 생각이 아닌 것 같아." },
+                    { en: "I don't think we have enough time.", ko: "우리 시간이 충분하지 않은 것 같아." },
+                    { en: "I don't think he knows.", ko: "걔는 모르는 것 같아." }
+                ]
+            },
+            {
+                day: 3,
+                en: "I think you should",
+                ko: "~하는 게 좋을 것 같아",
+                desc: "상대방에게 부드럽게 조언하거나 제안할 때 사용합니다.",
+                examples: [
+                    { en: "I think you should try it.", ko: "너 그거 한번 해보는 게 좋을 것 같아." },
+                    { en: "I think you should go home.", ko: "너 집에 가는 게 좋을 것 같아." },
+                    { en: "I think you should see a doctor.", ko: "병원에 가보는 게 좋을 것 같아." },
+                    { en: "I think you should apologize.", ko: "네가 사과하는 게 좋을 것 같아." }
+                ]
+            },
+            {
+                day: 3,
+                en: "It feels like",
+                ko: "~처럼 느껴져",
+                desc: "상황이나 분위기에 대한 주관적인 느낌을 표현합니다.",
+                examples: [
+                    { en: "It feels like summer.", ko: "여름처럼 느껴져." },
+                    { en: "It feels like a dream.", ko: "꿈만 같아." },
+                    { en: "It feels like we've met before.", ko: "우리 전에 만난 적 있는 것 같은 느낌이야." },
+                    { en: "It feels like something is wrong.", ko: "뭔가 잘못된 것 같은 느낌이야." }
+                ]
+            },
+            {
+                day: 3,
+                en: "It looks like",
+                ko: "~인 것 같아 (시각적)",
+                desc: "눈에 보이는 상황을 근거로 추측할 때 사용합니다.",
+                examples: [
+                    { en: "It looks like rain.", ko: "비가 올 것 같아." },
+                    { en: "It looks like he is busy.", ko: "걔 바쁜 것 같아." },
+                    { en: "It looks like a scam.", ko: "그거 사기인 것 같아." },
+                    { en: "It looks like we are lost.", ko: "우리 길을 잃은 것 같아." }
+                ]
+            },
+            {
+                day: 3,
+                en: "It sounds like",
+                ko: "~처럼 들려 / ~인 것 같아 (청각적/내용)",
+                desc: "들은 내용이나 제안에 대한 판단을 내릴 때 씁니다.",
+                examples: [
+                    { en: "It sounds like a plan.", ko: "좋은 생각이야. (그렇게 하자)" },
+                    { en: "It sounds like fun.", ko: "재밌겠다." },
+                    { en: "It sounds like a great opportunity.", ko: "좋은 기회인 것처럼 들려." },
+                    { en: "It sounds like he is angry.", ko: "그 사람 화난 목소리야." }
+                ]
+            },
+
+            // Day 4
+            {
+                day: 4,
+                en: "There is / There are",
+                ko: "~이 있어",
+                desc: "어떤 것의 존재 유무를 나타내는 가장 기본적인 표현입니다.",
+                examples: [
+                    { en: "There is a problem.", ko: "문제가 하나 있어." },
+                    { en: "There are many people here.", ko: "여기 사람 진짜 많아." },
+                    { en: "Is there a bathroom nearby?", ko: "근처에 화장실 있나요?" },
+                    { en: "There is nothing to eat.", ko: "먹을 게 하나도 없어." }
+                ]
+            },
+            {
+                day: 4,
+                en: "I'd like to",
+                ko: "~하고 싶어요",
+                desc: "'I want to'보다 더 격식 있고 공손하게 원함을 표현합니다.",
+                examples: [
+                    { en: "I'd like to order now.", ko: "지금 주문할게요." },
+                    { en: "I'd like to make a reservation.", ko: "예약을 하고 싶습니다." },
+                    { en: "I'd like to invite you to dinner.", ko: "저녁 식사에 초대하고 싶어요." },
+                    { en: "I'd like to ask a question.", ko: "질문 하나 하고 싶어요." }
+                ]
+            },
+            {
+                day: 4,
+                en: "I need you to",
+                ko: "네가 ~해 줬으면 해",
+                desc: "상대방에게 구체적인 행동을 요구하거나 지시할 때 씁니다.",
+                examples: [
+                    { en: "I need you to wait here.", ko: "여기서 기다려 줬으면 해." },
+                    { en: "I need you to focus.", ko: "네가 집중 좀 해 줬으면 해." },
+                    { en: "I need you to sign here.", ko: "여기에 서명해 주셔야 해요." },
+                    { en: "I need you to trust me.", ko: "나를 믿어 줬으면 해." }
+                ]
+            },
+            {
+                day: 4,
+                en: "I just wanted to",
+                ko: "그냥 ~하고 싶었어",
+                desc: "용건을 부드럽게 꺼내거나, 가벼운 이유를 댈 때 사용합니다.",
+                examples: [
+                    { en: "I just wanted to say thank you.", ko: "그냥 고맙다는 말을 하고 싶었어." },
+                    { en: "I just wanted to see your face.", ko: "그냥 네 얼굴 보고 싶었어." },
+                    { en: "I just wanted to make sure.", ko: "그냥 확실히 하고 싶었어." },
+                    { en: "I just wanted to say hi.", ko: "그냥 인사나 하려고 했어." }
+                ]
+            },
+            {
+                day: 4,
+                en: "I was wondering if",
+                ko: "혹시 ~해 줄 수 있나 해서요",
+                desc: "매우 조심스럽고 정중하게 부탁하거나 물어볼 때 사용합니다.",
+                examples: [
+                    { en: "I was wondering if you could help me.", ko: "혹시 저 좀 도와주실 수 있나 해서요." },
+                    { en: "I was wondering if you are free tonight.", ko: "오늘 저녁에 혹시 시간 되시나 해서요." },
+                    { en: "I was wondering if I could borrow this.", ko: "혹시 이거 빌릴 수 있을까 해서요." },
+                    { en: "I was wondering if you knew him.", ko: "혹시 그 사람 아시나 해서요." }
+                ]
+            },
+
+            // Day 5
+            {
+                day: 5,
+                en: "The thing is",
+                ko: "실은 / 문제는 ~라는 거야",
+                desc: "변명을 하거나, 중요한 상황/문제를 설명하기 전에 운을 뗄 때 씁니다.",
+                examples: [
+                    { en: "The thing is, I'm busy today.", ko: "실은, 나 오늘 바빠." },
+                    { en: "The thing is, I don't have money.", ko: "문제는 내가 돈이 없다는 거야." },
+                    { en: "The thing is, I forgot to bring it.", ko: "실은 내가 그걸 가져오는 걸 깜빡했어." },
+                    { en: "The thing is, it's too expensive.", ko: "문제는 그게 너무 비싸다는 거야." }
+                ]
+            },
+            {
+                day: 5,
+                en: "As far as I know",
+                ko: "내가 아는 한",
+                desc: "자신의 지식 범위 내에서 정보를 전달할 때(틀릴 수도 있음을 전제) 씁니다.",
+                examples: [
+                    { en: "As far as I know, he left.", ko: "내가 알기로는 걔 떠났어." },
+                    { en: "As far as I know, it's free.", ko: "내가 알기로는 그거 공짜야." },
+                    { en: "As far as I know, the meeting is cancelled.", ko: "내가 알기로 회의 취소됐어." },
+                    { en: "That's it, as far as I know.", ko: "내가 아는 건 그게 다야." }
+                ]
+            },
+            {
+                day: 5,
+                en: "You don't have to",
+                ko: "~할 필요 없어",
+                desc: "의무가 아님을 말해주거나 상대를 안심시킬 때 씁니다.",
+                examples: [
+                    { en: "You don't have to worry.", ko: "걱정할 필요 없어." },
+                    { en: "You don't have to hurry.", ko: "서두를 필요 없어." },
+                    { en: "You don't have to do this.", ko: "너 이거 안 해도 돼." },
+                    { en: "You don't have to apologize.", ko: "사과할 필요 없어." }
+                ]
+            },
+            {
+                day: 5,
+                en: "You might want to",
+                ko: "~하는 게 좋을지도 몰라",
+                desc: "상대방 기분이 상하지 않게 돌려서 조언하거나 추천할 때 씁니다.",
+                examples: [
+                    { en: "You might want to check again.", ko: "다시 확인해 보는 게 좋을 거야." },
+                    { en: "You might want to bring an umbrella.", ko: "우산 챙기는 게 좋을걸." },
+                    { en: "You might want to call him first.", ko: "그에게 먼저 전화해보는 게 좋을 거야." },
+                    { en: "You might want to take a break.", ko: "좀 쉬는 게 좋을 것 같아." }
+                ]
+            },
+            {
+                day: 5,
+                en: "It depends on",
+                ko: "~에 따라 달라",
+                desc: "상황이나 조건에 따라 결과가 달라짐을 말할 때 씁니다.",
+                examples: [
+                    { en: "It depends on the situation.", ko: "상황에 따라 달라." },
+                    { en: "It depends on the price.", ko: "가격에 따라 다르지." },
+                    { en: "It depends on you.", ko: "너한테 달렸어." },
+                    { en: "It depends on the weather.", ko: "날씨에 따라 달라." }
+                ]
+            },
+
+            // Day 6
+            {
+                day: 6,
+                en: "I'll let you know",
+                ko: "알려줄게",
+                desc: "나중에 정보를 주겠다고 약속할 때 자주 사용합니다.",
+                examples: [
+                    { en: "I'll let you know later.", ko: "나중에 알려줄게." },
+                    { en: "I'll let you know when I arrive.", ko: "도착하면 알려줄게." },
+                    { en: "I'll let you know if anything changes.", ko: "바뀌는 거 있으면 알려줄게." },
+                    { en: "I'll let you know the result.", ko: "결과 나오면 알려줄게." }
+                ]
+            },
+            {
+                day: 6,
+                en: "I didn't mean to",
+                ko: "그럴 의도는 아니었어 / 고의가 아니었어",
+                desc: "실수를 해명하거나 사과할 때 사용합니다.",
+                examples: [
+                    { en: "I didn't mean to hurt you.", ko: "너한테 상처 주려던 건 아니었어." },
+                    { en: "I didn't mean to ignore you.", ko: "널 무시하려던 게 아니었어." },
+                    { en: "I didn't mean to be late.", ko: "늦으려고 했던 건 아니야." },
+                    { en: "I didn't mean to wake you up.", ko: "깨우려던 건 아니었어." }
+                ]
+            },
+            {
+                day: 6,
+                en: "I can't wait to",
+                ko: "~하는 게 너무 기대돼 / 빨리 ~하고 싶어",
+                desc: "무언가를 간절히 기다리거나 기대감을 표현할 때 씁니다.",
+                examples: [
+                    { en: "I can't wait to see you.", ko: "빨리 널 보고 싶어." },
+                    { en: "I can't wait to go home.", ko: "빨리 집에 가고 싶어." },
+                    { en: "I can't wait to hear the news.", ko: "그 소식을 빨리 듣고 싶어." },
+                    { en: "I can't wait to start.", ko: "빨리 시작하고 싶어." }
+                ]
+            },
+            {
+                day: 6,
+                en: "That's why",
+                ko: "그래서 그런 거야 / 그게 ~한 이유야",
+                desc: "앞서 말한 내용에 대한 결과나 이유를 설명할 때 씁니다.",
+                examples: [
+                    { en: "That's why I left early.", ko: "그래서 내가 일찍 떠난 거야." },
+                    { en: "That's why I like her.", ko: "그게 내가 그녀를 좋아하는 이유야." },
+                    { en: "That's why you are tired.", ko: "그러니까 네가 피곤한 거지." },
+                    { en: "That's why I called you.", ko: "그래서 너한테 전화한 거야." }
+                ]
+            },
+            {
+                day: 6,
+                en: "That's what I mean",
+                ko: "내 말이 바로 그거야",
+                desc: "상대방의 말에 강하게 동의하거나, 내 의도를 다시 강조할 때 씁니다.",
+                examples: [
+                    { en: "That's what I mean.", ko: "내 말이 그 말이야." },
+                    { en: "That's exactly what I mean.", ko: "내 말이 바로 그거라니까." },
+                    { en: "That's not what I mean.", ko: "내 말은 그게 아니야." },
+                    { en: "Is that what you mean?", ko: "네 말이 그런 뜻이야?" }
+                ]
+            }
+        ];
+
+        let currentDay = 1;
+        let completedPatterns = {};
+        
+        const dayNav = document.getElementById('dayNav');
+        const patternList = document.getElementById('patternList');
+        const dayTitleText = document.getElementById('dayTitleText');
+        const progressText = document.getElementById('progressText');
+        const nextDayBtn = document.getElementById('nextDayBtn');
+
+        function init() {
+            loadProgress();
+            renderDayButtons();
+            loadDay(1);
+        }
+
+        function loadProgress() {
+            const saved = localStorage.getItem('english_patterns_progress');
+            if (saved) {
+                try {
+                    completedPatterns = JSON.parse(saved);
+                } catch (e) {
+                    completedPatterns = {};
+                }
+            }
+        }
+
+        function saveProgress() {
+            localStorage.setItem('english_patterns_progress', JSON.stringify(completedPatterns));
+            updateDayProgressUI();
+            updateCurrentDayProgress();
+        }
+
+        function toggleComplete(patternEn, event) {
+            if (event) event.stopPropagation();
+
+            if (completedPatterns[patternEn]) {
+                delete completedPatterns[patternEn];
+            } else {
+                completedPatterns[patternEn] = true;
+            }
+            
+            saveProgress();
+            
+            // 작은따옴표를 포함하는 선택자 처리를 위해 속성 선택자 사용 시 주의
+            // 속성 값에 포함된 작은따옴표를 이스케이프할 필요가 없도록, CSS 선택자에서는 큰따옴표로 감싸져 있음
+            // CSS.escape()를 사용하여 안전하게 처리
+            const safeSelector = CSS.escape(patternEn);
+            // 하지만 CSS.escape는 전체를 이스케이프하므로 data 속성 매칭에는 부적합할 수 있음.
+            // 가장 안전한 방법: 속성 선택자 구문에서 값 내부의 따옴표 처리
+            // input[data-pattern="I'm trying to"] -> 큰따옴표로 감싸면 작은따옴표는 안전함.
+            // 그러나 patternEn 자체에 큰따옴표가 있다면 문제됨. (현재 데이터엔 없음)
+            
+            const checkboxes = document.querySelectorAll(`input[data-pattern="${patternEn.replace(/"/g, '\\"')}"]`);
+            const itemDivs = document.querySelectorAll(`.pattern-item[data-pattern="${patternEn.replace(/"/g, '\\"')}"]`);
+            
+            checkboxes.forEach(cb => cb.checked = !!completedPatterns[patternEn]);
+            itemDivs.forEach(div => {
+                if (completedPatterns[patternEn]) {
+                    div.classList.add('completed');
+                } else {
+                    div.classList.remove('completed');
+                }
+            });
+        }
+
+        function updateCurrentDayProgress() {
+            const currentDayPatterns = patterns.filter(p => p.day === currentDay);
+            const doneCount = currentDayPatterns.filter(p => completedPatterns[p.en]).length;
+            const totalCount = currentDayPatterns.length;
+            
+            progressText.textContent = `${doneCount}/${totalCount} 완료`;
+            
+            if (doneCount === totalCount) {
+                progressText.style.background = "#dcfce7";
+                progressText.style.color = "#166534";
+            } else {
+                progressText.style.background = "#e0e7ff";
+                progressText.style.color = "#4f46e5";
+            }
+        }
+
+        function updateDayProgressUI() {
+            document.querySelectorAll('.day-btn').forEach((btn, idx) => {
+                const day = idx + 1;
+                const dayPatterns = patterns.filter(p => p.day === day);
+                const allDone = dayPatterns.every(p => completedPatterns[p.en]);
+                
+                if (allDone && dayPatterns.length > 0) {
+                    btn.classList.add('all-done');
+                } else {
+                    btn.classList.remove('all-done');
+                }
+            });
+        }
+
+        function renderDayButtons() {
+            dayNav.innerHTML = '';
+            for (let i = 1; i <= 6; i++) {
+                const btn = document.createElement('button');
+                btn.className = `day-btn ${i === currentDay ? 'active' : ''}`;
+                btn.innerHTML = `Day ${i} <div class="day-completed-dot"></div>`;
+                btn.onclick = () => loadDay(i);
+                dayNav.appendChild(btn);
+            }
+            updateDayProgressUI();
+        }
+
+        function loadDay(day) {
+            currentDay = day;
+            const currentDayPatterns = patterns.filter(p => p.day === currentDay);
+            
+            document.querySelectorAll('.day-btn').forEach((btn, idx) => {
+                if (idx + 1 === day) {
+                    btn.classList.add('active');
+                    btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            dayTitleText.textContent = `Day ${day} 학습하기`;
+            updateCurrentDayProgress();
+
+            renderPatternList(currentDayPatterns);
+
+            if (currentDay < 6) {
+                nextDayBtn.textContent = "다음 날짜(Day " + (currentDay + 1) + ") 학습하기 👉";
+                nextDayBtn.onclick = goToNextDay;
+            } else {
+                nextDayBtn.textContent = "1일차로 돌아가기 (무한 반복) 🔄";
+                nextDayBtn.onclick = () => {
+                    if(confirm("1회독을 마쳤습니다. 처음부터 다시 시작할까요?")) {
+                       loadDay(1);
+                       window.scrollTo(0, 0);
+                    }
+                };
+            }
+        }
+
+        function renderPatternList(dayPatterns) {
+            patternList.innerHTML = '';
+
+            dayPatterns.forEach((pattern) => {
+                const isCompleted = !!completedPatterns[pattern.en];
+                
+                const itemDiv = document.createElement('div');
+                itemDiv.className = `pattern-item ${isCompleted ? 'completed' : ''}`;
+                itemDiv.setAttribute('data-pattern', pattern.en);
+                
+                const examplesHtml = pattern.examples.map(ex => `
+                    <li class="example-item">
+                        <div class="ex-en">
+                            ${ex.en}
+                            <div class="speaker-icon" onclick="event.stopPropagation(); speakText('${ex.en.replace(/'/g, "\\'")}')">🔊</div>
+                        </div>
+                        <div class="ex-ko">${ex.ko}</div>
+                    </li>
+                `).join('');
+
+                // 여기서 작은따옴표(')를 이스케이프(\') 처리해야 HTML onclick 속성에서 에러가 안 남
+                const escapedPatternEn = pattern.en.replace(/'/g, "\\'");
+
+                itemDiv.innerHTML = `
+                    <div class="pattern-header" onclick="togglePattern(this)">
+                        <div class="checkbox-wrapper" onclick="toggleComplete('${escapedPatternEn}', event)">
+                            <input type="checkbox" class="custom-checkbox" 
+                                ${isCompleted ? 'checked' : ''} 
+                                data-pattern="${pattern.en.replace(/"/g, '&quot;')}">
+                        </div>
+                        <div class="pattern-title-group">
+                            <div class="pattern-en">${pattern.en}</div>
+                            <div class="pattern-ko">${pattern.ko}</div>
+                        </div>
+                        <div class="toggle-icon">▼</div>
+                    </div>
+                    <div class="pattern-content">
+                        <div class="pattern-desc">💡 ${pattern.desc}</div>
+                        <ul class="example-list">
+                            ${examplesHtml}
+                        </ul>
+                    </div>
+                `;
+
+                patternList.appendChild(itemDiv);
+            });
+        }
+
+        function togglePattern(headerElement) {
+            const item = headerElement.parentElement;
+            const isOpen = item.classList.contains('active');
+            
+            document.querySelectorAll('.pattern-item').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            if (!isOpen) {
+                item.classList.add('active');
+                
+                setTimeout(() => {
+                    const headerRect = item.getBoundingClientRect();
+                    const navHeight = document.getElementById('dayNav').offsetHeight + 60;
+                    
+                    if (headerRect.top < navHeight) {
+                        window.scrollTo({
+                            top: window.pageYOffset + headerRect.top - navHeight - 10,
+                            behavior: 'smooth'
+                        });
+                    }
+                }, 300);
+            }
+        }
+
+        function goToNextDay() {
+            if (currentDay < 6) {
+                loadDay(currentDay + 1);
+                window.scrollTo(0, 0);
+            }
+        }
+
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.85; 
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert("이 브라우저는 음성 재생을 지원하지 않습니다.");
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>
