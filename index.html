@@ -398,7 +398,15 @@
     </style>
 </head>
 <body>
-
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/service-worker.js')
+            .then(reg => console.log('서비스 워커 등록 성공!'))
+            .catch(err => console.error('서비스 워커 등록 실패:', err));
+        });
+    }
+</script>
     <header>
         <h1>영어 필수 패턴 30</h1>
     </header>
